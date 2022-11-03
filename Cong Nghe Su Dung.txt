@@ -1,0 +1,3 @@
+BE: NODEJS EXPRESS
+FE: React Native
+DB: Mongo DB

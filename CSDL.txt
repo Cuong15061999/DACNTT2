@@ -1,0 +1,35 @@
+Bai` Bao'.
+Link: string;
+Picture: string;
+Name: string;
+DatePost: date;
+
+Tag
+Name: String;
+
+
+Trang Bao'
+Link: string;
+Picture: string;
+
+
+User
+UserName: String
+Email: String
+Passwork: String
+
+Admin
+UserName: String
+Password: String
+
+-------------------
+Bai Bao vs Trang Bao ( n<--have-->1): 1 bài báo chỉ thuộc 1 trang báo
+, 1 trang báo có thể có nhiều bài báo.
+
+Bai Bao vs Tag ( 1<--have--> n): 1 bài báo chỉ theo 1 tag duy nhất,
+1 tag có thể gồm nhiều bài báo
+
+Bai Bao vs Bai Bao (n<--Liên quan-->n): 1 bài báo có thể liên quan
+(giống nd vs nhiều bài báo)
+
+User vs Bai Bao (n<--like&save-->n): 1 user có thể like & save nhiều bài báo
