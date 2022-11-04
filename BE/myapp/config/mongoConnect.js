@@ -22,6 +22,7 @@ const mongoconnect = {
             default:
                 throw new Error('Unknow execution environment: ' + app.get('env'));
         }
+
         //intial create first User in User Collection
         // User.find(function (err, users) {
         //     if (users.length) return;
