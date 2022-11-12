@@ -1,10 +1,14 @@
 let Parser = require('rss-parser');
-let parser = new Parser;
+let parser = new Parser({
+    customFields: {
+        item: ['image','description']
+    }
+});
 
 class CrawlService {
     async CrawlInfo(req) {
         console.log('test rss')
-        let feed = await parser.parseURL('https://vnexpress.net/rss/tin-moi-nhat.rss');
+        let feed = await parser.parseURL('https://thanhnien.vn/rss/gioi-tre-69.rss');
         console.log(feed.title);
 
         feed.items.forEach(item => {
