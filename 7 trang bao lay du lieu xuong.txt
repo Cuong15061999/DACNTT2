@@ -1,7 +1,7 @@
-https://thanhnien.vn/
-https://tuoitre.vn/
-https://tienphong.vn/
-https://vnexpress.net/
+https://thanhnien.vn/  https://thanhnien.vn/rss/home.rss
+https://tuoitre.vn/  https://tuoitre.vn/rss/tin-moi-nhat.rss
+https://tienphong.vn/  https://tienphong.vn/rss/home.rss
+https://vnexpress.net/  https://vnexpress.net/rss/tin-moi-nhat.rss
 https://vietnamnet.vn/
 https://zingnews.vn/
 https://congthuong.vn/
