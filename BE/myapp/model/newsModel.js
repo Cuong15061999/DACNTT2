@@ -1,5 +1,5 @@
-import { Schema, model } from 'mongoose';
-var NewsSchema = new Schema({
+const mongoose  = require('mongoose');
+var NewsSchema = new mongoose.Schema({
     title: { type: String, required: true },
     domain: { type: String, required: true },
     url: { type: String, required: true },
@@ -7,5 +7,5 @@ var NewsSchema = new Schema({
     content: { type: String, required: true },
 });
 
-var News = model('News', NewsSchema);
-export default News;
+var News = mongoose.model('News', NewsSchema);
+module.exports = News;

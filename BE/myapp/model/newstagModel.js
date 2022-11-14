@@ -1,9 +1,10 @@
-import { Schema, model } from 'mongoose';
-var TagSchema = new Schema({
+var mongoose = require('mongoose');
+
+var TagSchema = new mongoose.Schema({
     tag_name: { type: String, required: true },
     created_at: { type: Date, required: true, default: Date.now },
     domain: { type: String, required: true },
 });
 
-var Tag = model('Tag', TagSchema);
-export default Tag;
+var Tag = mongoose.model('Tag', TagSchema);
+module.exports = Tag;

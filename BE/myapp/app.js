@@ -6,6 +6,9 @@ var logger = require('morgan');
 var connect = require('./config/mongoConnect');
 
 var indexRouter = require('./routes/index');
+var loginRouter = require('./routes/login');
+var newsRouter = require('./routes/news');
+var newsPaperRouter = require('./routes/newspaper');
 var usersRouter = require('./routes/users');
 
 var app = express();
@@ -24,7 +27,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 connect.connectDB()
 
 app.use('/', indexRouter);
+app.use('/login', loginRouter);
+app.use('/news', newsRouter);
+app.use('/newspaper', newsPaperRouter);
 app.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

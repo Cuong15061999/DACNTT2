@@ -1,5 +1,6 @@
-import { Schema, model } from 'mongoose';
-var AdminSchema = new Schema({
+const mongoose  = require('mongoose');
+
+var AdminSchema = new mongoose.Schema({
     username: { type: String, required: true },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -7,5 +8,5 @@ var AdminSchema = new Schema({
     created: { type: Date, required: true, default: Date.now },
 });
 
-var Admin = model('Admin', AdminSchema);
-export default Admin;
+var Admin = mongoose.model('Admin', AdminSchema);
+module.exports = Admin;

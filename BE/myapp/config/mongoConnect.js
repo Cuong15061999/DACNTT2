@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
-//var User = require('../models/user')
+var User = require('../model/userModel');
+var Admin = require('../model/adminModel')
 require('dotenv').config();
 let env_ToDeploy = process.env.ENV;
 let MongoUrl = process.env.MongoCN;
@@ -24,17 +25,17 @@ const mongoconnect = {
         }
 
         //intial create first User in User Collection
-        // User.find(function (err, users) {
-        //     if (users.length) return;
-        //     new User({
-        //         email: 'admin@gmail.com',
-        //         password: 'admin',
-        //         fullName: 'administrator',
-        //     }).save(function (err) {
-        //         if (err) throw err;
-        //         console.log('First user successfully saved.');
-        //     });
-        // })
+        Admin.find(function (err, admins) {
+            if (admins.length) return;
+            new Admin({
+                username: 'admin',
+                password: 'admin',
+                email: 'admin@gmail.com',
+            }).save(function (err) {
+                if (err) throw err;
+                console.log('First admin successfully saved.');
+            });
+        })
 
     }
 }

@@ -1,5 +1,6 @@
-import { Schema, model } from 'mongoose';
-var UserSchema = new Schema({
+var mongoose = require('mongoose');
+
+var UserSchema = new mongoose.Schema({
     username: { type: String, required: true },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -8,5 +9,5 @@ var UserSchema = new Schema({
     created: { type: Date, required: true, default: Date.now },
 });
 
-var User = model('User', UserSchema);
-export default User;
+var User = mongoose.model('User', UserSchema);
+module.exports = User;
