@@ -15,7 +15,7 @@ const getUrl = (link) => {
 
 class CrawlService {
     async CrawlInfo(req) {
-        let feed = await parser.parseURL('https://vnexpress.net/rss/tin-moi-nhat.rss');
+        let feed = await parser.parseURL('https://tuoitre.vn/rss/tin-moi-nhat.rss');
         console.log(feed.title);
 
         feed.items.forEach(item => {
