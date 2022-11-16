@@ -18,6 +18,7 @@ class newsPaperSevice {
             await newsPaper.updateOne({_id: req.params.id}, {$set: req.body});
             return req.body
         }
+        return
     }
     async delNewsPaper(id){
         const newspaper = await newsPaper.findOne({_id: id});
@@ -25,6 +26,7 @@ class newsPaperSevice {
             await newsPaper.deleteOne({_id: id})
             return newspaper
         }
+        return
     }
 }
 

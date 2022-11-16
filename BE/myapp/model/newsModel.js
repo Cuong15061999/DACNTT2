@@ -4,7 +4,7 @@ var NewsSchema = new mongoose.Schema({
     domain: { type: String, required: true },
     url: { type: String, required: true },
     picture: { type: String, default: '' },
-    content: { type: String, required: true },
+    content: { type: String },
 });
 
 var News = mongoose.model('News', NewsSchema);

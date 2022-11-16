@@ -1,32 +1,44 @@
-const axios = require('axios');
-const cheerio = require('cheerio')
+const newsModel = require('../model/newsModel')
+const newsPaperModel = require("../model/NewsSitesModel")
 let Parser = require('rss-parser');
 let parser = new Parser({
     customFields: {
         item: ['image','description']
     }
 });
-const seenUrls = [];
-const getUrl = (link) => {
-    if (link.includes("https")){
-        return link
-    }
-}
 
 class CrawlService {
-    async CrawlInfo(req) {
-        let feed = await parser.parseURL('https://tuoitre.vn/rss/tin-moi-nhat.rss');
-        console.log(feed.title);
+    async CrawlSpecificSite(rss, link) {
+        try {
+            let feed = await parser.parseURL(rss);
+            const findnewsPaper = await newsPaperModel.findOne({domain_name: link, rss_url: rss})
+            if(findnewsPaper){
+                if(!findnewsPaper.logo){
+                    await newsPaperModel.updateOne({_id: findnewsPaper._id}, {$set: {logo: feed.image.url}});
+                }
+            }else{
+                return 'wrong domain'
+            }
 
-        feed.items.forEach(item => {
-            console.log('--------------')
-            console.log('Title: '+item.title)
-            console.log('Description: '+item.description)
-            console.log('Link: '+item.link)
-            console.log('public date: '+item.pubDate)
-            console.log('Categories: '+item.categories)
-        });
-        return 'test'
+            feed.items.forEach(async item => {
+                const findNews = await newsModel.findOne({url: item.link});
+                if(!findNews){
+                    await new newsModel({
+                        title: item.title,
+                        domain: link,
+                        url: item.link,
+                        picture: item.description //can` tach va` lay du lieu tu the img
+                    }).save();
+                }
+            });
+            return 'success'
+        } catch (error) {
+            return error.message
+        }
+
+    }
+    async CrawlAllSite(){
+        return 'this service will crawl all link in the db'
     }
 }
 module.exports = new CrawlService();
