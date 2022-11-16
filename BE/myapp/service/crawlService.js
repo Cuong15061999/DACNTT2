@@ -13,7 +13,7 @@ class CrawlService {
             let feed = await parser.parseURL(rss);
             const findnewsPaper = await newsPaperModel.findOne({domain_name: link, rss_url: rss})
             if(findnewsPaper){
-                if(!findnewsPaper.logo){
+                if(!findnewsPaper.logo && feed.image){
                     await newsPaperModel.updateOne({_id: findnewsPaper._id}, {$set: {logo: feed.image.url}});
                 }
             }else{
@@ -38,7 +38,17 @@ class CrawlService {
 
     }
     async CrawlAllSite(){
-        return 'this service will crawl all link in the db'
+        try {
+            const allSiteUrl = await newsPaperModel.find();
+            allSiteUrl.forEach(async siteUrl =>{
+                const crawlSite = await this.CrawlSpecificSite(siteUrl.rss_url, siteUrl.domain_name);
+                //if crawl not success after 15p crawl again, model need have one status show that site crawl success or not
+                console.log('crawl site '+ siteUrl.domain_name + ' process: ' + crawlSite)
+            }) 
+            return 'this service will crawl all link in the db'
+        } catch (error) {
+            
+        }
     }
 }
 module.exports = new CrawlService();
