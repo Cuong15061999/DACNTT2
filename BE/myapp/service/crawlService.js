@@ -6,7 +6,12 @@ let parser = new Parser({
         item: ['image','description']
     }
 });
-
+const takeImage = (stringImage)=>{
+    if (stringImage.includes("img")) {
+        const imageLink = stringImage.match(/src="(.*?)"/i)[1];
+        return imageLink ? imageLink : ''
+    }
+}
 class CrawlService {
     async CrawlSpecificSite(rss, link) {
         try {
@@ -27,13 +32,17 @@ class CrawlService {
                         title: item.title,
                         domain: link,
                         url: item.link,
-                        picture: item.description //can` tach va` lay du lieu tu the img
+                        picture: takeImage(item.description), //can` tach va` lay du lieu tu the img
+                        date: item.pubDate
                     }).save();
                 }
             });
+            await newsPaperModel.updateOne({domain_name: link, rss_url: rss}, {$set: {crawl_process: 'success'}});
             return 'success'
         } catch (error) {
-            return error.message
+            console.log(error.message);
+            await newsPaperModel.updateOne({domain_name: link, rss_url: rss}, {$set: {crawl_process: 'failed'}});
+            return 'failed'
         }
 
     }

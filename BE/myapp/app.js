@@ -4,12 +4,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var connect = require('./config/mongoConnect');
+var cron = require('node-cron');
+var moment = require('moment');
 
 var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
 var newsRouter = require('./routes/news');
 var newsPaperRouter = require('./routes/newspaper');
 var usersRouter = require('./routes/users');
+var CrawlService = require('./service/crawlService');
+var newsPaperModel = require('./model/NewsSitesModel');
 
 var app = express();
 
@@ -25,6 +29,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Connect to Mongodb compass
 connect.connectDB()
+//crawl link that failed
+const runFailedLink = async () => {
+  cron.schedule('* * * * *', async () => {
+    const failedLink = await newsPaperModel.find({ crawl_process: "failed" });
+    if (failedLink.length !== 0) {
+      console.log('crawl the failed link again');
+    } else {
+      console.log('stop')
+    }
+  })
+}
+runFailedLink()
+//daily crawling news will run on 00:00 every day
+//node-cron document https://www.npmjs.com/package/node-cron
+cron.schedule('0 0 * * *', () => {
+  console.log('Daily Crawling News ; ' + moment().format('MMMM Do YYYY, h:mm:ss a'));
+  CrawlService.CrawlAllSite();
+}, {
+  scheduled: true,
+  timezone: "Asia/Ho_Chi_Minh"
+});
 
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
@@ -34,12 +59,12 @@ app.use('/users', usersRouter);
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
