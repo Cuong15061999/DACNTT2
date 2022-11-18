@@ -5,7 +5,7 @@ var router = express.Router();
 router.post ('/', function(req, res, next) {
   console.log(req.body.username + '  ' + req.body.password)
   res.status(200).json({
-    message: 'this is login function'
+    message: 'this is login Admin function'
   })
 });
 

@@ -52,7 +52,7 @@ class CrawlService {
             allSiteUrl.forEach(async siteUrl =>{
                 const crawlSite = await this.CrawlSpecificSite(siteUrl.rss_url, siteUrl.domain_name);
                 //if crawl not success after 15p crawl again, model need have one status show that site crawl success or not
-                console.log('crawl site '+ siteUrl.domain_name + ' process: ' + crawlSite)
+                console.log('crawl site '+ siteUrl.domain_name +'rss url '+ siteUrl.rss_url + ' process: ' + crawlSite)
             }) 
             return 'this service will crawl all link in the db'
         } catch (error) {

@@ -1,5 +1,6 @@
 var createError = require('http-errors');
 var express = require('express');
+var mongoose = require('mongoose');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -7,13 +8,22 @@ var connect = require('./config/mongoConnect');
 var cron = require('node-cron');
 var moment = require('moment');
 
+var passport = require("passport");
+var bodyParser = require("body-parser");
+var LocalStrategy = require("passport-local");
+var passportLocalMongoose = require("passport-local-mongoose");
+
 var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
+var loginAdminRouter = require('./routes/adminLogin')
+var registerRouter = require('./routes/register')
 var newsRouter = require('./routes/news');
 var newsPaperRouter = require('./routes/newspaper');
 var usersRouter = require('./routes/users');
+
 var CrawlService = require('./service/crawlService');
 var newsPaperModel = require('./model/NewsSitesModel');
+var userModel = require('./model/userModel');
 
 var app = express();
 
@@ -31,21 +41,26 @@ app.use(express.static(path.join(__dirname, 'public')));
 connect.connectDB()
 //crawl link that failed
 const runFailedLink = async () => {
-  cron.schedule('* * * * *', async () => {
+  const repeat = cron.schedule('* * * * *', async () => {
     const failedLink = await newsPaperModel.find({ crawl_process: "failed" });
     if (failedLink.length !== 0) {
       console.log('crawl the failed link again');
+      failedLink.forEach(async link => {
+        const repeatCrawl = await CrawlService.CrawlSpecificSite(link.rss_url, link.domain_name);
+        console.log(repeatCrawl)
+      } )
     } else {
-      console.log('stop')
+      console.log('stop crawling failed link')
+      repeat.stop();
     }
   })
 }
-runFailedLink()
 //daily crawling news will run on 00:00 every day
 //node-cron document https://www.npmjs.com/package/node-cron
 cron.schedule('0 0 * * *', () => {
   console.log('Daily Crawling News ; ' + moment().format('MMMM Do YYYY, h:mm:ss a'));
   CrawlService.CrawlAllSite();
+  runFailedLink()
 }, {
   scheduled: true,
   timezone: "Asia/Ho_Chi_Minh"
@@ -53,6 +68,8 @@ cron.schedule('0 0 * * *', () => {
 
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
+app.use('/loginAdmin', loginAdminRouter)
+app.use('/register', registerRouter);
 app.use('/news', newsRouter);
 app.use('/newspaper', newsPaperRouter);
 app.use('/users', usersRouter);
