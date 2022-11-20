@@ -12,8 +12,7 @@ var bodyParser = require("body-parser");
 var LocalStrategy = require("passport-local");
 
 var indexRouter = require('./routes/index');
-var loginRouter = require('./routes/login');
-var loginAdminRouter = require('./routes/adminLogin')
+var auth = require('./routes/authRoutes')
 var newsRouter = require('./routes/news');
 var newsPaperRouter = require('./routes/newspaper');
 var usersRouter = require('./routes/users');
@@ -64,8 +63,7 @@ cron.schedule('0 0 * * *', () => {
 });
 
 app.use('/', indexRouter);
-app.use('/login', loginRouter);
-app.use('/loginAdmin', loginAdminRouter)
+app.use('/auth', auth);
 app.use('/news', newsRouter);
 app.use('/newspaper', newsPaperRouter);
 app.use('/users', usersRouter);

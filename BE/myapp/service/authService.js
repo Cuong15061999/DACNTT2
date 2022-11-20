@@ -10,11 +10,27 @@ const randToken = require('rand-token');
 
 require('dotenv').config();
 
+const generateToken = async (payload, secretSignature, tokenLife) => {
+  try {
+    return await sign({
+      payload,
+    },
+      secretSignature,
+      {
+        algorithm: 'HS256',
+        expiresIn: tokenLife
+      });
+  } catch (error) {
+    console.log(`Error in generate access token:  + ${error}`);
+    return null;
+  }
+}
+
 class authService {
   async register(req, res) {
-    const username = req.body.email.toLowerCase();
-    const checkUser = await userModel.find(username);
-    if (checkUser) {
+    const username = req.body.username.toLowerCase();
+    const userCheck = await userModel.findOne({ username: username });
+    if (userCheck) {
       return res.status(409).send('Tên tài khoản đã tồn tại.');
     }
     else {
@@ -24,7 +40,7 @@ class authService {
         password: hashPassword,
         email: req.body.email
       };
-      const createUser = userModel.insert(newUser);
+      const createUser = await new userModel(newUser).save();
       if (!createUser) {
         return res
           .status(500)
@@ -35,14 +51,14 @@ class authService {
       });
     }
   }
-  async login(req, res, next) {
+  async login(req, res) {
     const username = req.body.username.toLowerCase();
     const password = req.body.password;
-    const userCheck = await userModel.find(username);
+    const userCheck = await userModel.findOne({ username: username });
     if (!userCheck) {
       return res.status(401).send('Tên đăng nhập không tồn tại.');
     }
-    const isPasswordValid = bcrypt.compareSync(password, user.password);
+    const isPasswordValid = bcrypt.compareSync(password, userCheck.password);
     if (!isPasswordValid) {
       return res.status(401).send('Mật khẩu không chính xác.');
     }
@@ -65,10 +81,10 @@ class authService {
         .send('Đăng nhập không thành công, vui lòng thử lại.');
     }
 
-    let refreshToken = randToken.generate(jwtVariable.refreshTokenSize);
+    let refreshToken = randToken.generate(process.env.REFRESH_TOKEN_SIZE);
     if (!userCheck.refreshToken) {
       // Nếu user này chưa có refresh token thì lưu refresh token đó vào database
-      await userModel.updateOne(userCheck.username, refreshToken);
+      await userModel.updateOne({ username: username }, { refreshToken: refreshToken });
     } else {
       // Nếu user này đã có refresh token thì lấy refresh token đó từ database
       refreshToken = userCheck.refreshToken;
@@ -79,22 +95,6 @@ class authService {
       refreshToken,
       userCheck,
     });
-  }
-
-  async generateToken(payload, secretSignature, tokenLife) {
-    try {
-      return await sign({
-        payload,
-      },
-      secretSignature,
-      {
-        algorithm: 'HS256',
-				expiresIn: tokenLife
-      });
-    } catch (error) {
-      console.log(`Error in generate access token:  + ${error}`);
-      return null;
-    }
   }
 }
 
