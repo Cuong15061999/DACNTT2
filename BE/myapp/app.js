@@ -1,6 +1,5 @@
 var createError = require('http-errors');
 var express = require('express');
-var mongoose = require('mongoose');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -11,12 +10,10 @@ var moment = require('moment');
 var passport = require("passport");
 var bodyParser = require("body-parser");
 var LocalStrategy = require("passport-local");
-var passportLocalMongoose = require("passport-local-mongoose");
 
 var indexRouter = require('./routes/index');
 var loginRouter = require('./routes/login');
 var loginAdminRouter = require('./routes/adminLogin')
-var registerRouter = require('./routes/register')
 var newsRouter = require('./routes/news');
 var newsPaperRouter = require('./routes/newspaper');
 var usersRouter = require('./routes/users');
@@ -69,7 +66,6 @@ cron.schedule('0 0 * * *', () => {
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
 app.use('/loginAdmin', loginAdminRouter)
-app.use('/register', registerRouter);
 app.use('/news', newsRouter);
 app.use('/newspaper', newsPaperRouter);
 app.use('/users', usersRouter);
