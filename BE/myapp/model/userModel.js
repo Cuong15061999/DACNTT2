@@ -6,6 +6,7 @@ var UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     avatar: { type: String, default: '' },
     tag_favorite: { type: [String], default: []},
+    refreshToken: { type: String, default: ''},
     created: { type: Date, required: true, default: Date.now },
 });
 
