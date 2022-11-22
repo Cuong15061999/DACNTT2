@@ -26,6 +26,26 @@ const generateToken = async (payload, secretSignature, tokenLife) => {
   }
 }
 
+const decodeToken = async (token, secretKey) => {
+  try {
+    return await verify(token, secretKey, {
+      ignoreExpiration: true,
+    });
+  } catch (error) {
+    console.log(`Error in decode access token: ${error}`);
+    return null;
+  }
+}
+
+const verifyToken = async (token, secretKey) => {
+  try {
+    return await verify(token, secretKey);
+  } catch (error) {
+    console.log(`Error in verify access token:  + ${error}`);
+    return null;
+  }
+}
+
 class authService {
   async register(req, res) {
     const username = req.body.username.toLowerCase();
@@ -51,8 +71,9 @@ class authService {
       });
     }
   }
+
   async login(req, res) {
-    const username = req.body.username.toLowerCase();
+    const username = req.body.username;
     const password = req.body.password;
     const userCheck = await userModel.findOne({ username: username });
     if (!userCheck) {
@@ -95,6 +116,69 @@ class authService {
       refreshToken,
       userCheck,
     });
+  }
+
+  async refreshToken(req, res) {
+
+    const accessTokenFromHeader = req.headers.x_authorization;
+    if (!accessTokenFromHeader) {
+      return res.status(400).send('Không tìm thấy access token.');
+    }
+    // Lấy refresh token từ body
+    const refreshTokenFromBody = req.body.refreshToken;
+    if (!refreshTokenFromBody) {
+      return res.status(400).send('Không tìm thấy refresh token.');
+    }
+    const accessTokenSecret =
+      process.env.ACCESS_TOKEN_SECRET;
+    const accessTokenLife =
+      process.env.ACCESS_TOKEN_LIFE;
+
+    // Decode access token đó
+    const decoded = await decodeToken(
+      accessTokenFromHeader,
+      accessTokenSecret,
+    );
+    if (!decoded) {
+      return res.status(400).send('Access token không hợp lệ.');
+    }
+    // Lấy username từ payload
+    const username = decoded.payload.username;
+    const userCheck = await userModel.findOne({ username: username });
+    if (!userCheck) {
+      return res.status(401).send('User không tồn tại.');
+    }
+
+    if (refreshTokenFromBody !== userCheck.refreshToken) {
+      return res.status(400).send('Refresh token không hợp lệ.');
+    }
+
+    const dataForAccessToken = {
+      username
+    };
+
+    const accessToken = await generateToken(
+      dataForAccessToken,
+      accessTokenSecret,
+      accessTokenLife,
+    );
+
+    if (!accessToken) {
+      return res
+        .status(400)
+        .send('Tạo access token không thành công, vui lòng thử lại.');
+    }
+    return res.status(200).json({
+      accessToken,
+    });
+  }
+  async verifyToken (token, secretKey) {
+    try {
+      return await verify(token, secretKey);
+    } catch (error) {
+      console.log(`Error in verify access token:  + ${error}`);
+      return null;
+    }
   }
 }
 
