@@ -17,6 +17,7 @@
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
+    "ml-classify-text": "^2.0.0",
     "moment": "^2.29.4",
     "momment": "^0.0.1",
     "mongoose": "^6.7.1",

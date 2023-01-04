@@ -22,6 +22,21 @@ router.get('/crawl',async function(req, res, next) {
     })
   }
 });
+router.get('/trainModel',async function(req, res, next) {
+  try {
+    const getAllNews = await crawlService.getModalTrainTitle();
+    if(getAllNews){
+      res.status(200).json({
+        data: getAllNews,
+        message: 'Success get all news'
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    })
+  }
+});
 /* Crawl specific website. */
 router.post('/crawl',async function(req, res, next) {
   try {
@@ -118,6 +133,5 @@ router.delete('/:id',async function(req, res, next) {
     })
   }
 });
-
 
 module.exports = router;

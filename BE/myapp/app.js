@@ -19,7 +19,6 @@ var usersRouter = require('./routes/users');
 
 var CrawlService = require('./service/crawlService');
 var newsPaperModel = require('./model/NewsSitesModel');
-var userModel = require('./model/userModel');
 
 var app = express();
 
