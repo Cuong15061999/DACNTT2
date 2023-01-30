@@ -2,10 +2,12 @@ const newsModel = require('../model/newsModel');
 const newsPaperModel = require("../model/NewsSitesModel");
 let Parser = require('rss-parser');
 const { Classifier } = require('ml-classify-text');
+var logger = require('logger').createLogger();;
 var fs = require('fs');
 var moment = require('moment');
 
 let parser = new Parser({
+    defaultRSS: 2.0,
     customFields: {
         item: ['image', 'description']
     }
@@ -60,30 +62,107 @@ class CrawlService {
             })
             return 'this service will crawl all link in the db'
         } catch (error) {
-
+            throw error
         }
     }
 
-    async getModalTrainTitle() {
-        const classifier = new Classifier({
-            nGramMin: 2,
-            nGramMax: 2
-        });
+    async getTrainTitle() {
         try {
             const allTitle = await newsModel.find({}, { title: 1, _id: 0 });
             let dataTrain = []
             allTitle.forEach(async trainTitle => {
                 dataTrain.push(trainTitle.title);
             });
-            classifier.train(dataTrain, 'thoi-su');
-            let model = classifier.model.serialize();
-            const data = JSON.stringify(model);
-            fs.writeFile("model.json", data, function(err) {
-                  if (err) {
-                      console.log(err);
-                  }
-                });
+            const data = JSON.stringify(dataTrain);
+            fs.writeFile("./dataT/game.json", data, function (err) {
+                if (err) {
+                    console.log(err);
+                }
+            });
             return 'training success', data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async genrePrediction(title) {
+        try {
+            let read = fs.readFileSync('model.json');
+            let data = await JSON.parse(read);
+            // console.log(data);
+            const classifier = await new Classifier({
+
+            });
+            classifier.model = await data
+            //---------- predict -----------------
+            let predictions2 = await classifier.predict(title)
+            
+            if (predictions2.length) {
+              predictions2.forEach(prediction2 => {
+                console.log(`after read model ${prediction2.label} (${prediction2.confidence})`)
+              })
+              return predictions2.label;
+            } else {
+              console.log('No predictions returned')
+              return ''
+            }          
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async readModalAndStore() {
+        try {
+            const classifier = new Classifier({
+            });
+            let gameRaw = fs.readFileSync('./dataT/game.json');
+            let game = JSON.parse(gameRaw);
+            let thethaoRaw = fs.readFileSync('./dataT/thethao.json');
+            let thethao = JSON.parse(thethaoRaw);
+            let congngheRaw = fs.readFileSync('./dataT/congnghe.json');
+            let congnghe = JSON.parse(congngheRaw);
+            let dulichRaw = fs.readFileSync('./dataT/dulich.json');
+            let dulich = JSON.parse(dulichRaw);
+            let giaitriRaw = fs.readFileSync('./dataT/giaitri.json');
+            let giaitri = JSON.parse(giaitriRaw);
+            let giaoducRaw = fs.readFileSync('./dataT/giaoduc.json');
+            let giaoduc = JSON.parse(giaoducRaw);
+            let kinhteRaw = fs.readFileSync('./dataT/kinhte.json');
+            let kinhte = JSON.parse(kinhteRaw);
+            let suckhoeRaw = fs.readFileSync('./dataT/suckhoe.json');
+            let suckhoe = JSON.parse(suckhoeRaw);
+            let thoisuRaw = fs.readFileSync('./dataT/thoisu.json');
+            let thoisu = JSON.parse(thoisuRaw);
+            let vanhoaRaw = fs.readFileSync('./dataT/vanhoa.json');
+            let vanhoa = JSON.parse(vanhoaRaw);
+            await classifier.train(game, 'game');
+            await classifier.train(thethao, 'thể thao');
+            await classifier.train(congnghe, 'công nghệ');
+            await classifier.train(dulich, 'du lịch');
+            await classifier.train(giaitri, 'giải trí');
+            await classifier.train(giaoduc, 'giáo dục');
+            await classifier.train(kinhte, 'kinh tế');
+            await classifier.train(suckhoe, 'sức khỏe');
+            await classifier.train(thoisu, 'thời sự');
+            await classifier.train(vanhoa, 'văn hóa');
+            let model = await classifier.model.serialize();
+            const data = JSON.stringify(model);
+            fs.writeFile("model.json", data, function (err) {
+                if (err) {
+                    console.log(err);
+                }
+            });
+            // let predictions2 = await classifier.predict("endless đã")
+            // if (predictions2.length) {
+            //   predictions2.forEach(prediction2 => {
+            //     console.log(`after read model ${prediction2.label} (${prediction2.confidence})`)
+            //   })
+            //   return predictions2.label;
+            // } else {
+            //   console.log('No predictions returned')
+            //   return ''
+            // }   
+            // return data
         } catch (error) {
             throw error
         }

@@ -9,7 +9,7 @@ router.get('/crawl',async function(req, res, next) {
     if(crawlNews){
       res.status(200).json({
         data: crawlNews,
-        message: 'Success crawl news form newspaper link: '+ req.body.link
+        message: 'Success crawl news form newspaper link: '
       })
     }else{
       res.status(404).json({
@@ -24,11 +24,42 @@ router.get('/crawl',async function(req, res, next) {
 });
 router.get('/trainModel',async function(req, res, next) {
   try {
-    const getAllNews = await crawlService.getModalTrainTitle();
+    const getAllNews = await crawlService.getTrainTitle();
     if(getAllNews){
       res.status(200).json({
         data: getAllNews,
         message: 'Success get all news'
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    })
+  }
+});
+// Get Big modal data
+router.get('/readModel',async function(req, res, next) {
+  try {
+    const traning = await crawlService.readModalAndStore(req.body.title);
+    if(traning){
+      res.status(200).json({
+        message: 'Success'
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    })
+  }
+});
+// Prediction
+router.post('/predict',async function(req, res, next) {
+  try {
+    const prediction = await crawlService.genrePrediction(req.body.title);
+    if(prediction){
+      res.status(200).json({
+        genre: prediction,
+        message: 'Success'
       })
     }
   } catch (error) {
@@ -44,7 +75,7 @@ router.post('/crawl',async function(req, res, next) {
     if(crawlNews === 'success'){
       res.status(200).json({
         data: crawlNews,
-        message: 'Success crawl news form newspaper link: '+ req.body.link
+        message: 'Success crawl news form newspaper link: '
       })
     }else{
       res.status(404).json({
