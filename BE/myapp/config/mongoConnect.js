@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-var User = require('../model/userModel');
-var Admin = require('../model/adminModel')
+var Guest = require('../model/GuestModel');
+var Admin = require('../model/AdminModel')
 require('dotenv').config();
 let env_ToDeploy = process.env.ENV;
 let MongoUrl = process.env.MongoCN;

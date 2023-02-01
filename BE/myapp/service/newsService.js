@@ -1,4 +1,5 @@
-var newsModel = require("../model/newsModel")
+var newsModel = require("../model/NewsModel")
+
 class newsService {
     async getAllNews(){
         return await newsModel.find();

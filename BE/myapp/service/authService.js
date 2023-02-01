@@ -1,5 +1,5 @@
 // route middleware để kiểm tra một user đã đăng nhập hay chưa?
-const userModel = require('../model/userModel')
+const Guest = require('../model/GuestModel')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
@@ -37,19 +37,10 @@ const decodeToken = async (token, secretKey) => {
   }
 }
 
-const verifyToken = async (token, secretKey) => {
-  try {
-    return await verify(token, secretKey);
-  } catch (error) {
-    console.log(`Error in verify access token:  + ${error}`);
-    return null;
-  }
-}
-
 class authService {
   async register(req, res) {
     const username = req.body.username.toLowerCase();
-    const userCheck = await userModel.findOne({ username: username });
+    const userCheck = await Guest.findOne({ username: username });
     if (userCheck) {
       return res.status(409).send('Tên tài khoản đã tồn tại.');
     }
@@ -60,7 +51,7 @@ class authService {
         password: hashPassword,
         email: req.body.email
       };
-      const createUser = await new userModel(newUser).save();
+      const createUser = await new Guest(newUser).save();
       if (!createUser) {
         return res
           .status(500)
@@ -75,7 +66,7 @@ class authService {
   async login(req, res) {
     const username = req.body.username;
     const password = req.body.password;
-    const userCheck = await userModel.findOne({ username: username });
+    const userCheck = await Guest.findOne({ username: username });
     if (!userCheck) {
       return res.status(401).send('Tên đăng nhập không tồn tại.');
     }
@@ -105,7 +96,7 @@ class authService {
     let refreshToken = randToken.generate(process.env.REFRESH_TOKEN_SIZE);
     if (!userCheck.refreshToken) {
       // Nếu user này chưa có refresh token thì lưu refresh token đó vào database
-      await userModel.updateOne({ username: username }, { refreshToken: refreshToken });
+      await Guest.updateOne({ username: username }, { refreshToken: refreshToken });
     } else {
       // Nếu user này đã có refresh token thì lấy refresh token đó từ database
       refreshToken = userCheck.refreshToken;
@@ -144,7 +135,7 @@ class authService {
     }
     // Lấy username từ payload
     const username = decoded.payload.username;
-    const userCheck = await userModel.findOne({ username: username });
+    const userCheck = await Guest.findOne({ username: username });
     if (!userCheck) {
       return res.status(401).send('User không tồn tại.');
     }

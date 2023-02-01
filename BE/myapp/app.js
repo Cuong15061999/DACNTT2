@@ -15,7 +15,7 @@ var indexRouter = require('./routes/index');
 var auth = require('./routes/authRoutes')
 var newsRouter = require('./routes/news');
 var newsPaperRouter = require('./routes/newspaper');
-var usersRouter = require('./routes/users');
+var guestRouter = require('./routes/guest');
 
 var CrawlService = require('./service/crawlService');
 var newsPaperModel = require('./model/NewsSitesModel');
@@ -65,7 +65,7 @@ app.use('/', indexRouter);
 app.use('/auth', auth);
 app.use('/news', newsRouter);
 app.use('/newspaper', newsPaperRouter);
-app.use('/users', usersRouter);
+app.use('/guests', guestRouter);
 
 
 // catch 404 and forward to error handler

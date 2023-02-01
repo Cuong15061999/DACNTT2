@@ -1,4 +1,4 @@
-const userModle = require('../../model/userModel');
+const Guest = require('../../model/GuestModel');
 const authService = require('../authService');
 require('dotenv').config();
 
@@ -19,7 +19,7 @@ exports.isAuth = async (req, res, next) => {
 			.status(401)
 			.send('Bạn chưa được cấp quyền truy cập vào trang!');
 	}
-	const user = await userModle.find({username: verified.payload.username});
+	const user = await Guest.find({username: verified.payload.username});
 	req.user = user;
 
 	return next();

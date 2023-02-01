@@ -40,7 +40,7 @@ router.get('/trainModel',async function(req, res, next) {
 // Get Big modal data
 router.get('/readModel',async function(req, res, next) {
   try {
-    const traning = await crawlService.readModalAndStore(req.body.title);
+    const traning = await crawlService.readModalAndStore();
     if(traning){
       res.status(200).json({
         message: 'Success'

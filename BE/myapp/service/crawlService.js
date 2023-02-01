@@ -1,4 +1,4 @@
-const newsModel = require('../model/newsModel');
+const newsModel = require('../model/NewsModel');
 const newsPaperModel = require("../model/NewsSitesModel");
 let Parser = require('rss-parser');
 const { Classifier } = require('ml-classify-text');
