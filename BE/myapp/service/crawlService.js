@@ -18,9 +18,12 @@ class CrawlService {
             let feed = await parser.parseURL(rss);
             const findnewsPaper = await newsPaperModel.findOne({domain_name: link, rss_url: rss})
             if(findnewsPaper){
+                //update logo if don't have yet
                 if(!findnewsPaper.logo && feed.image){
                     await newsPaperModel.updateOne({_id: findnewsPaper._id}, {$set: {logo: feed.image.url}});
                 }
+                //update latest date crawl
+                await newsPaperModel.updateOne({_id: findnewsPaper._id}, {$set: {last_date_crawl: Date.now()}});
             }else{
                 return 'wrong domain'
             }
@@ -28,13 +31,25 @@ class CrawlService {
             feed.items.forEach(async item => {
                 const findNews = await newsModel.findOne({url: item.link});
                 if(!findNews){
-                    await new newsModel({
-                        title: item.title,
-                        domain: link,
-                        url: item.link,
-                        picture: takeImage(item.description), //can` tach va` lay du lieu tu the img
-                        date: item.pubDate
-                    }).save();
+                    if(findnewsPaper.type){
+                        await new newsModel({
+                            title: item.title,
+                            domain: link,
+                            url: item.link,
+                            picture: takeImage(item.description), //can` tach va` lay du lieu tu the img
+                            date: item.pubDate,
+                            type: findnewsPaper.type
+                        }).save();
+                    } else {
+                        await new newsModel({
+                            title: item.title,
+                            domain: link,
+                            url: item.link,
+                            picture: takeImage(item.description), //can` tach va` lay du lieu tu the img
+                            date: item.pubDate,
+                            type: genrePrediction(item.title)
+                        }).save();
+                    }
                 }
             });
             await newsPaperModel.updateOne({domain_name: link, rss_url: rss}, {$set: {crawl_process: 'success'}});
@@ -57,6 +72,32 @@ class CrawlService {
             return 'this service will crawl all link in the db'
         } catch (error) {
             
+        }
+    }
+
+    async genrePrediction(title) {
+        try {
+            let read = fs.readFileSync('model.json');
+            let data = await JSON.parse(read);
+            // console.log(data);
+            const classifier = await new Classifier({
+
+            });
+            classifier.model = await data
+            //---------- predict -----------------
+            let predictions2 = await classifier.predict(title)
+            
+            if (predictions2.length) {
+              predictions2.forEach(prediction2 => {
+                console.log(`after read model ${prediction2.label} (${prediction2.confidence})`)
+              })
+              return predictions2.label;
+            } else {
+              console.log('No predictions returned')
+              return ''
+            }          
+        } catch (error) {
+            throw error
         }
     }
 }

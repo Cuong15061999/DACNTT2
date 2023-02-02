@@ -5,7 +5,8 @@ var NewsSchema = new mongoose.Schema({
     url: { type: String, required: true },
     picture: { type: String, default: '' },
     content: { type: String },
-    date: { type: Date, default: Date.now()}
+    date: { type: Date, default: Date.now()},
+    type: { type: String, default: ''}
 });
 
 var News = mongoose.model('News', NewsSchema);
