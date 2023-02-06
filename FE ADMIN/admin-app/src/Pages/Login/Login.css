@@ -1,0 +1,24 @@
+.loginForm {
+  padding: 20px;
+  height: 60vh;
+  width: 280px;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+  background: linear-gradient(
+    333deg,
+    rgba(252, 213, 230, 1) 0%,
+    rgba(230, 241, 255, 1) 100%
+  );
+}
+
+.loginTitle {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.registerForm {
+  height: 70vh;
+}

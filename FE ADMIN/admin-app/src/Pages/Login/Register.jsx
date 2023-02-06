@@ -1,16 +1,15 @@
 import { Button, Grid, Link, Paper, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import "./Login.css";
-export const Login = () => {
+export const Register = () => {
   const [credentials, setCredentials] = useState({
     username: undefined,
+    email: undefined,
     password: undefined,
   });
-
-  const { dispatch } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -21,30 +20,31 @@ export const Login = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     // console.log(dispatch);
-    dispatch({ type: "LOGIN_START" });
     try {
       const res = await axios.post(
-        "http://localhost:3001/auth/login",
+        "http://localhost:3001/auth/register",
         credentials
       );
-
-      let { userCheck, msg, ...token } = res.data;
-      // console.log(res.data);
-      dispatch({ type: "LOGIN_SUCCESS", payload: token });
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       console.log(err);
-      dispatch({ type: "LOGIN_FAILURE", payload: err });
     }
   };
   return (
     <Grid className="login">
-      <Paper elevation={10} className="loginForm">
-        <h2 className="loginTitle">Sign In</h2>
+      <Paper elevation={10} className="loginForm registerForm">
+        <h2 className="loginTitle">Sign Up</h2>
         <TextField
           label="Username"
           placeholder="Enter username"
           id="username"
+          onChange={handleChange}
+          fullWidth
+        />
+        <TextField
+          label="Email"
+          placeholder="Enter email"
+          id="email"
           onChange={handleChange}
           fullWidth
         />
@@ -62,16 +62,16 @@ export const Login = () => {
           onClick={handleClick}
           fullWidth
         >
-          Sign In
+          Register
         </Button>
         <Link
           component="button"
           variant="body2"
           onClick={() => {
-            navigate("/register");;
+            navigate("/login");
           }}
         >
-          Register
+          Login
         </Link>
       </Paper>
     </Grid>
