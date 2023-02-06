@@ -1,13 +1,13 @@
 import React from 'react'
 import './NewsPaper.css'
 import { NewsPaperTable } from '../../components/Table/NewsPaperTable'
-import { Button } from '@mui/material'
+import { Link } from 'react-router-dom'
 
 export const NewsPaper = () => {
   return (
     <div className='NewsPaperPage'>
       <h1>NewsPaper Page</h1>
-      <Button variant="outlined" color="success">Add Newspaper</Button>
+      <Link to='/NewspaperAdd' className='btn btn-success' >Add Newspaper</Link>
       <NewsPaperTable></NewsPaperTable>
     </div>
   )
