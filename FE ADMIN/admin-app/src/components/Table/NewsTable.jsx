@@ -92,6 +92,11 @@ export const NewsTable = () => {
   return (
     <div className='Table' style={{ height: 650, width: '100%' }}>
       <DataGrid
+      initialState={{
+        sorting: {
+          sortModel: [{ field: 'date', sort: 'desc' }],
+        },
+      }}
         rows={newsData.map((item, index) => ({ id: index + 1, ...item }))}
         columns={columns}
         pageSize={10}
