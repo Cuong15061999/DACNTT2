@@ -7,7 +7,8 @@ var UserSchema = new mongoose.Schema({
     avatar: { type: String, default: '' },
     tag_favorite: { type: [String], default: []},
     refreshToken: { type: String, default: ''},
-    created: { type: Date, required: true, default: Date.now },
+    isAdmin: { type: Number, default: 0},
+    created: { type: Date, required: true, default: new Date().toJSON().slice(0, 10)},
 });
 
 var User = mongoose.model('User', UserSchema);

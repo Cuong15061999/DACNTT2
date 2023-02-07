@@ -58,6 +58,20 @@ router.get('/',async function(req, res, next) {
     })
   }
 });
+
+router.get('/newCrawlNews',async function(req, res, next) {
+  try {
+    const count = await newsService.countNewsCrawl();
+    res.status(200).json({
+      data: count,
+      message: 'Count new crawl',
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    })
+  }
+});
 /* GET Specific News. */
 router.get('/:id',async function(req, res, next) {
   try {

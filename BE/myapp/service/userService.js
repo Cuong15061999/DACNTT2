@@ -28,5 +28,9 @@ class userService {
         }
         return
     }
+    async getNewUser(){
+        const count = await userModel.find({created: new Date().toJSON().slice(0, 10)});
+        return count.length
+    }
 }
 module.exports = new userService();

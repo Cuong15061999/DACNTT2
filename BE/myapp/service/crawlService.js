@@ -71,7 +71,7 @@ class CrawlService {
             }) 
             return 'this service will crawl all link in the db'
         } catch (error) {
-            
+            return error
         }
     }
 

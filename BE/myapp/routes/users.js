@@ -17,6 +17,20 @@ router.get('/',async function(req, res, next) {
   }
 });
 
+router.get('/newUsers',async function(req, res, next) {
+  try {
+    const alluser = await userSevice.getNewUser();
+    res.status(200).json({
+      data: alluser,
+      message: 'Get new users',
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    })
+  }
+});
+
 /* GET Specific user. */
 router.get('/:id',async function(req, res, next) {
   try {

@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var TagSchema = new mongoose.Schema({
     tag_name: { type: String, required: true },
-    created_at: { type: Date, required: true, default: Date.now },
+    created_at: { type: Date, required: true, default: new Date().toJSON().slice(0, 10) },
     domain: { type: String, required: true },
 });
 

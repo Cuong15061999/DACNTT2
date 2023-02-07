@@ -3,6 +3,10 @@ class newsService {
     async getAllNews(){
         return await newsModel.find();
     }
+    async countNewsCrawl(){
+        const count = await newsModel.find({date: new Date().toJSON().slice(0, 10)});
+        return count.length
+    }
     async getNews(id){
         return await newsModel.findOne({_id: id})
     }

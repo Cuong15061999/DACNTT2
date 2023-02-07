@@ -37,15 +37,6 @@ const decodeToken = async (token, secretKey) => {
   }
 }
 
-const verifyToken = async (token, secretKey) => {
-  try {
-    return await verify(token, secretKey);
-  } catch (error) {
-    console.log(`Error in verify access token:  + ${error}`);
-    return null;
-  }
-}
-
 class authService {
   async register(req, res) {
     const username = req.body.username.toLowerCase();
@@ -88,7 +79,8 @@ class authService {
     const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
     const dataForAccessToken = {
-      username: userCheck.username
+      username: userCheck.username,
+      isAdmin: userCheck.isAdmin
     };
     const accessToken = await generateToken(
       dataForAccessToken,
@@ -144,6 +136,7 @@ class authService {
     }
     // Lấy username từ payload
     const username = decoded.payload.username;
+    const isAdmin = decoded.payload.isAdmin;
     const userCheck = await userModel.findOne({ username: username });
     if (!userCheck) {
       return res.status(401).send('User không tồn tại.');
@@ -154,7 +147,8 @@ class authService {
     }
 
     const dataForAccessToken = {
-      username
+      username,
+      isAdmin
     };
 
     const accessToken = await generateToken(
