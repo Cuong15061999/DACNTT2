@@ -6,7 +6,6 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom'
 import axios from 'axios';
-
 import './NewsPaperDetail.css'
 import moment from 'moment';
 export const NewsPaperDetail = () => {
@@ -23,6 +22,27 @@ export const NewsPaperDetail = () => {
       console.log(err)
     })
   },[])
+  const handleOnclick = () => {
+    if (window.confirm('Do you want to Crawl This newspaper ?')) {
+      axios.post('http://localhost:3001/news/crawl',{
+        rss: newspaperData.rss_url,
+        link: newspaperData.domain_name
+      })
+        .then((res) => {
+          console.log(res.data)
+          if(res.data.data === 'success'){
+            alert('Crawl Link Successfully')
+          } else{
+            alert('Crawl Link Failed. pls try again')
+          }
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.log(err)
+          alert('Crawl Link Failed. pls try again')
+        })
+    }
+  };
   return (
     <Box
     sx={{
@@ -40,7 +60,7 @@ export const NewsPaperDetail = () => {
     <TextField focused color="success" sx={{ marginBottom: 2 }} fullWidth label="Latest Time Crawl" id="type" value={moment(newspaperData.last_date_crawl).format('DD-MM-YYYY, h:mm a')} />
     <TextField focused color="success" sx={{ marginBottom: 2 }} fullWidth label="Type" id="type" value={newspaperData.type} />
 
-    <button className='btn btn-success' type='submit'> Crawl </button>
+    <button className='btn btn-success' onClick={() => { handleOnclick() }}> Crawl </button>
     <Link to='/Newspaper' className='btn btn-danger'> Back </Link>
   </Box>
   )

@@ -10,11 +10,15 @@ import { NewsPaperEdit } from './Pages/NewsPaperEdit/NewsPaperEdit';
 
 import { News } from './Pages/News/News';
 import { NewsDetail } from './Pages/NewsDetail/NewsDetail';
+import { NewsEdit } from './Pages/NewsEdit/NewsEdit';
+
 import { Login } from './Pages/Login/Login';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { Routes, Route } from 'react-router-dom'
 import Protected from "./components/Protected/Protected";
 import { Register } from "./Pages/Login/Register";
+import { UserEdit } from './Pages/UserEdit/UserEdit';
+import { UserAdd } from './Pages/UserAdd/UserAdd';
 
 function App() {
   return (
@@ -25,7 +29,9 @@ function App() {
           <Route path='/' element={ <Protected><MainDashboard></MainDashboard></Protected> }></Route>
 
           <Route path='/User' element={<Protected><UserPage></UserPage></Protected> }></Route>
+          <Route path='/UserAdd' element={<UserAdd></UserAdd>}></Route>
           <Route path='/UserDetail/:id' element={<UserDetail></UserDetail>}></Route>
+          <Route path='/UserEdit/:id' element={<UserEdit></UserEdit>}></Route>
 
           <Route path='/Newspaper' element={<NewsPaper></NewsPaper>}></Route>
           <Route path='/NewspaperAdd' element={<NewsPaperAdd></NewsPaperAdd>}></Route>
@@ -34,6 +40,7 @@ function App() {
 
           <Route path='/News' element={<News></News>}></Route>
           <Route path='/NewsDetail/:id' element={<NewsDetail></NewsDetail>}></Route>
+          <Route path='/NewsEdit/:id' element={<NewsEdit></NewsEdit>}></Route>
 
           <Route path='/Login' element={<Login></Login>}></Route>
           <Route path="/Register" element={<Register />}></Route>
